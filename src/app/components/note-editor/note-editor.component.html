@@ -1,0 +1,17 @@
+<div class="modal-backdrop" (click)="cancelled.emit()">
+  <section class="editor-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div><p class="eyebrow">{{ editing ? 'Atualizar registro' : 'Novo registro' }}</p><h2>{{ editing ? 'Editar anotação' : 'O que está na sua cabeça?' }}</h2></div>
+      <button class="close-button" type="button" (click)="cancelled.emit()">×</button>
+    </div>
+    <form (ngSubmit)="submit()">
+      <label>Assunto <input name="assunto" [(ngModel)]="note.assunto" required maxlength="150" placeholder="Ex.: Aprendizados sobre APIs"></label>
+      <label>Categoria <input name="categoria" [(ngModel)]="note.categoria" maxlength="100" placeholder="Ex.: Estudos, Trabalho, Ideias"></label>
+      <label>Resumo <textarea name="resumo" [(ngModel)]="note.resumo" required rows="7" placeholder="Escreva os pontos principais…"></textarea></label>
+      <div class="modal-actions">
+        <button type="button" class="secondary-button" (click)="cancelled.emit()">Cancelar</button>
+        <button type="submit" class="primary-button" [disabled]="!note.assunto || !note.resumo || saving">{{ saving ? 'Salvando…' : (editing ? 'Salvar alterações' : 'Salvar anotação') }} <span>→</span></button>
+      </div>
+    </form>
+  </section>
+</div>

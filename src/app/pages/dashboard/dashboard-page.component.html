@@ -1,0 +1,90 @@
+<div class="study-shell">
+  <aside class="study-sidebar" [class.mobile-open]="mobileLibraryOpen">
+    <div class="study-brand"><span class="study-brand-mark">∴</span><span>caderno<span class="study-brand-accent">.dev</span></span><button class="study-drawer-close" (click)="closeMobileLibrary()" aria-label="Fechar biblioteca">×</button></div>
+    <p class="study-tagline">IDEIAS, APRENDIZADOS<br>E NOTAS EM UM SÓ LUGAR</p>
+    <p class="study-sidebar-label">MINHA BIBLIOTECA</p>
+    <nav class="study-nav">
+      <button class="study-nav-item" [class.active]="selectedCategory === 'Todos'" (click)="selectCategory('Todos')"><span>▦</span> Todas as anotações <small>{{ notes.length }}</small></button>
+      @for (category of categories; track category) {
+        <button class="study-nav-item" [class.active]="selectedCategory === category" (click)="selectCategory(category)"><span>▱</span> {{ category }} <small>{{ categoryCount(category) }}</small></button>
+      }
+    </nav>
+    <div class="study-mobile-note-list">
+      <p>RESUMOS</p>
+      @for (note of filteredNotes; track trackById($index, note)) {
+        <button class="study-mobile-note" [class.selected]="selectedNote?.id === note.id" (click)="selectNote(note)">
+          <strong>{{ note.assunto }}</strong>
+          <small>{{ note.categoria || 'Geral' }}</small>
+        </button>
+      }
+    </div>
+    <div class="study-sidebar-footer"><i>✦</i><p><strong>Seu conhecimento cresce um pouco a cada nota.</strong></p><span>● {{ notes.length ? 'Biblioteca atualizada' : 'Comece sua biblioteca' }}</span></div>
+    <button class="study-logout" (click)="logout()">↪ Sair da conta</button>
+    <div class="study-mobile-drawer-actions">
+      <button type="button"><span class="study-drawer-action-icon">{{ username.charAt(0).toUpperCase() || 'V' }}</span><small>{{ username || 'Minha conta' }}</small></button>
+      <button type="button" (click)="toggleTheme()"><span class="study-drawer-action-symbol">{{ theme === 'light' ? '☾' : '☼' }}</span><small>{{ theme === 'light' ? 'Modo escuro' : 'Modo claro' }}</small></button>
+      <button type="button" class="study-drawer-logout" (click)="logout()"><span class="study-drawer-action-symbol">↪</span><small>Sair da conta</small></button>
+    </div>
+  </aside>
+  @if (mobileLibraryOpen) { <div class="study-drawer-backdrop" (click)="closeMobileLibrary()"></div> }
+
+  <main class="study-content-area">
+    <header class="study-mobile-topbar">
+      <button class="study-menu-button" (click)="toggleMobileLibrary()" aria-label="Abrir minha biblioteca">☰</button>
+      <div class="study-mobile-logo"><span>∴</span> caderno<strong>.dev</strong></div>
+      <div class="study-mobile-actions">
+        <button class="study-mobile-action" (click)="mobileSearchOpen = !mobileSearchOpen" aria-label="Buscar">⌕</button>
+        <button class="study-mobile-action" (click)="toggleTheme()" [attr.aria-label]="theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'">{{ theme === 'light' ? '☾' : '☼' }}</button>
+        <button class="study-mobile-user" (click)="showProfileMenu = !showProfileMenu" aria-label="Abrir perfil">{{ username.charAt(0).toUpperCase() || 'V' }}</button>
+      </div>
+      @if (showProfileMenu) { <div class="study-profile-menu study-mobile-profile-menu"><strong>{{ username }}</strong><button (click)="logout()">Sair</button></div> }
+    </header>
+    @if (mobileSearchOpen) { <label class="study-mobile-search"><span>⌕</span><input type="search" [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="Buscar na biblioteca…"></label> }
+    <header class="study-header">
+      <label class="study-search"><span>⌕</span><input type="search" [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="Buscar na sua biblioteca…"><kbd>⌘ K</kbd></label>
+      <div class="study-header-actions"><button class="study-theme" (click)="toggleTheme()" [attr.aria-label]="theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'">{{ theme === 'light' ? '☾' : '☼' }}</button><span class="study-divider"></span><button class="study-profile" (click)="showProfileMenu = !showProfileMenu"><span class="study-avatar">{{ username.charAt(0).toUpperCase() || 'V' }}</span><span>{{ username || 'Visitante' }}</span></button>@if (showProfileMenu) { <div class="study-profile-menu"><strong>{{ username }}</strong><button (click)="logout()">Sair</button></div> }</div>
+    </header>
+
+    <div class="study-workspace">
+      <section class="study-document-list">
+        <div class="study-list-hero"><div class="study-list-hero-row"><div><p class="study-eyebrow">SEU ESPAÇO DE ESTUDO</p><h1>Minha biblioteca</h1><p>Organize o que você está aprendendo.</p></div><button class="study-new-note" (click)="openNew()">＋ Nova nota</button></div></div>
+        <div class="study-list-toolbar"><h2>{{ selectedCategory === 'Todos' ? 'Todas as anotações' : selectedCategory }} <span>{{ filteredNotes.length }}</span></h2><button (click)="selectCategory('Todos')">Limpar filtro</button></div>
+        @if (isLoading) { <div class="study-loading">Carregando sua biblioteca…</div> } @else if (!filteredNotes.length) { <div class="study-empty">Nenhuma nota encontrada.<button (click)="openNew()">Criar primeira anotação →</button></div> } @else {
+          <div class="study-doc-items">
+            @for (note of filteredNotes; track trackById($index, note)) {
+              <button class="study-doc-item" [class.selected]="selectedNote?.id === note.id" (click)="selectNote(note)">
+                <span class="study-doc-number">{{ ($index + 1).toString().padStart(2, '0') }}</span><span class="study-doc-icon">▤</span><span class="study-doc-copy"><strong>{{ note.assunto }}</strong><small>{{ note.resumo }}</small></span><span class="study-doc-date">{{ formatDate(note.atualizadoEm || note.criadoEm) }}</span><span class="study-arrow">›</span>
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="study-reader">
+        @if (selectedNote) {
+          <div class="study-reader-meta"><span>NOTA / {{ (selectedNote.categoria || 'GERAL') | uppercase }}</span><span class="study-reader-tools"><button (click)="openEdit(selectedNote)">Editar</button><button class="study-delete" (click)="deleteNote(selectedNote)">Excluir</button></span></div>
+          <h1 class="study-document-title">{{ selectedNote.assunto }}</h1>
+          <div class="study-document-chips"><span class="study-status-chip"><b></b> Atualizada em {{ formatDate(selectedNote.atualizadoEm || selectedNote.criadoEm) }}</span><span class="study-area-chip">{{ selectedNote.categoria || 'Anotação pessoal' }}</span></div>
+          <article class="study-markdown"><p class="study-lead">{{ selectedNote.resumo }}</p><h2>Resumo da anotação</h2><p>{{ selectedNote.resumo }}</p><blockquote>Uma ideia registrada hoje pode se tornar a base para um projeto amanhã.</blockquote></article>
+        } @else {
+          <div class="study-reader-empty"><span>✎</span><h2>Selecione uma anotação</h2><p>Escolha uma nota na sua biblioteca para ler o conteúdo.</p></div>
+        }
+      </section>
+    </div>
+  </main>
+</div>
+@if (showEditor) { <app-note-editor [note]="form" [editing]="!!editingId" [saving]="isSaving" (saved)="saveNote($event)" (cancelled)="closeEditor()"></app-note-editor> }
+@if (deleteCandidate) {
+  <div class="delete-modal-backdrop" (click)="cancelDelete()">
+    <section class="delete-modal" (click)="$event.stopPropagation()">
+      <div class="delete-modal-icon">⌫</div>
+      <p class="study-eyebrow">CONFIRMAR EXCLUSÃO</p>
+      <h2>Excluir esta anotação?</h2>
+      <p class="delete-modal-copy">Você está prestes a excluir <strong>“{{ deleteCandidate.assunto }}”</strong>. Essa ação não pode ser desfeita.</p>
+      <div class="delete-modal-actions">
+        <button type="button" class="delete-cancel" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="delete-confirm" (click)="confirmDelete()">Excluir anotação</button>
+      </div>
+    </section>
+  </div>
+}
