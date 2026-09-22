@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Note, NotePayload } from '../models/note.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class NoteService {
-  private readonly resource = '/caderno-dev';
+  private readonly resource = environment.apiUrl + '/caderno-dev';
 
   constructor(private readonly http: HttpClient) {}
 

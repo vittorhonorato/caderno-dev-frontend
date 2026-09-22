@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { LoginPayload, LoginResponse, RegisterPayload } from '../models/auth.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -11,13 +12,13 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {}
 
   login(payload: LoginPayload): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/auth/login', payload).pipe(
+    return this.http.post<LoginResponse>(environment.apiUrl + '/auth/login', payload).pipe(
       tap(response => this.persistSession(response.token, payload.username))
     );
   }
 
   register(payload: RegisterPayload): Observable<void> {
-    return this.http.post<void>('/auth/register', payload);
+    return this.http.post<void>(environment.apiUrl + '/auth/register', payload);
   }
 
   logout(): void {
