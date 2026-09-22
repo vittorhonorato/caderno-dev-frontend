@@ -33,6 +33,7 @@
       <button class="study-menu-button" (click)="toggleMobileLibrary()" aria-label="Abrir minha biblioteca">☰</button>
       <div class="study-mobile-logo"><span>∴</span> caderno<strong>.dev</strong></div>
       <div class="study-mobile-actions">
+        <button class="study-mobile-action study-mobile-new-note" (click)="openNew()" aria-label="Criar nova nota">＋</button>
         <button class="study-mobile-action" (click)="mobileSearchOpen = !mobileSearchOpen" aria-label="Buscar">⌕</button>
         <button class="study-mobile-action" (click)="toggleTheme()" [attr.aria-label]="theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'">{{ theme === 'light' ? '☾' : '☼' }}</button>
         <button class="study-mobile-user" (click)="showProfileMenu = !showProfileMenu" aria-label="Abrir perfil">{{ username.charAt(0).toUpperCase() || 'V' }}</button>
