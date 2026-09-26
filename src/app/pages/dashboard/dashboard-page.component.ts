@@ -113,6 +113,7 @@ export class DashboardPageComponent implements OnInit {
       this.selectedNote = this.filteredNotes[0];
     }
   }
+  clearSearch(): void { this.search = ''; this.applyFilters(); }
   categoryCount(category: string): number { return this.notes.filter(note => note.categoria === category).length; }
   categoryClass(category?: string): string { return 'tag-' + (category ?? 'Geral').toLowerCase().replace(/\s+/g, '-'); }
   formatDate(value?: string): string { return value ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(new Date(value)) : 'Agora'; }
